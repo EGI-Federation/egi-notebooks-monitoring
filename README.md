@@ -1,4 +1,4 @@
-# notebooks-monitor
+# egi-notebooks-monitoring
 
 EGI Notebooks monitoring tools
 
