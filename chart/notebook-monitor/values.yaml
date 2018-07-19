@@ -1,0 +1,24 @@
+service:
+  user: monitor
+  name: status
+  api_token:
+
+monitor:
+  image:
+    name: eginotebooks/notebook-monitor
+    tag: 0.1.0 
+    pullPolicy: IfNotPresent
+
+web:
+  image:
+    name: eginotebooks/notebook-monitor-web
+    tag: 0.1.0 
+    pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi

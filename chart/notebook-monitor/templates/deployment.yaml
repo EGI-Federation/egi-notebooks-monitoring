@@ -1,0 +1,62 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: monitor 
+  labels:
+    app: hubmonitor 
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hubmonitor 
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        name: monitor
+        app: hubmonitor 
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+    spec:
+      containers:
+        - name: ui
+          image: "{{ .Values.web.image.name }}:{{ .Values.web.image.tag }}"
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          env:
+            - name: JUPYTERHUB_SERVICE_PREFIX
+              value: "/services/{{ .Values.service.name }}"
+            - name: STATUS_FILE
+              value: /shared/status.json
+          volumeMounts:
+            - name: shared-data
+              mountPath: /shared
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          resources:
+{{ toYaml .Values.web.resources | indent 12 }}
+        - name: monitor
+          image: "{{ .Values.monitor.image.name }}:{{ .Values.monitor.image.tag }}"
+          imagePullPolicy: {{ .Values.monitor.image.pullPolicy }}
+          env:
+            - name: JUPYTERHUB_API_URL
+              value: "http://hub.{{ $.Release.Namespace }}.svc.cluster.local:8081/hub/api"
+            # this is a secret...
+            - name: JUPYTERHUB_API_TOKEN
+              value: "{{ .Values.service.api_token}}"
+            - name: JUPYTERHUB_USER
+              value: "{{ .Values.service.user }}"
+              value: monitor
+            - name: STATUS_FILE
+              value: /shared/status.json
+          volumeMounts:
+            - name: shared-data
+              mountPath: /shared
+          resources:
+{{ toYaml .Values.monitor.resources | indent 12 }}
+      volumes:
+        - name: shared-data
+          emptyDir: {}
