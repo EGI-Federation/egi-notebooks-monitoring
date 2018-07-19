@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 import time
 from urllib.parse import urljoin
 
@@ -81,6 +82,9 @@ if __name__ == '__main__':
 
     # first execution
     check_notebook(api_url, token, user, status_file)
+
+    if os.environ.get('SINGLE_EXECUTION', '').upper() == 'TRUE':
+        sys.exit()
 
     schedule.every(1).hour.do(check_notebook, api_url, token, user, status_file)
     while True:
