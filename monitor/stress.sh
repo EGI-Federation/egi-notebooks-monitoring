@@ -3,7 +3,7 @@
 # Simple script to stress test a jupyter deployment by spawning
 # a set of notebooks in parallel
 
-MAX_SERVERS=40
+MAX_SERVERS=60
 
 OUTDIR=$(mktemp -d)
 for USER in $(seq -w $MAX_SERVERS); do

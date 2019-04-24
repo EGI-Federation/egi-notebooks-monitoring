@@ -10,7 +10,7 @@ from requests.exceptions import RequestException
 import schedule
 
 
-def spawn_notebook(api_url, token, user):
+def spawn_notebook(api_url, token, user, delete=True):
     start = time.time()
     user_url = urljoin(api_url, 'users/%s' % user)
     server_url = urljoin(api_url, 'users/%s/server' % user)
@@ -44,19 +44,21 @@ def spawn_notebook(api_url, token, user):
                 break
         time.sleep(5)
     # delete the server, don't care much about the result?
-    r = requests.delete(server_url, headers=headers)
-    end = time.time()
+    if delete:
+        requests.delete(server_url, headers=headers)
+    elapsed = time.time() - start
     if server_ready:
-        return 'OK', 'Spawned server in %.2f seconds' %  (end - start)
+        return 'OK', 'Spawned server in %.2f seconds' % elapsed
+    return 'CRITICAL', 'Server did not start in %.2f seconds' % elapsed
 
 
-def check_notebook(api_url, token, user, status_file):
+def check_notebook(api_url, token, user, status_file, delete=True):
     logging.info('Checking notebooks spawning!')
     status = {
         'time': time.time(),
     }
     try:
-        code, msg = spawn_notebook(api_url, token, user)
+        code, msg = spawn_notebook(api_url, token, user, delete)
         status['code'] = code
         status['msg'] = msg
     except RequestException as e:
@@ -81,7 +83,7 @@ if __name__ == '__main__':
     status_file = os.environ.get('STATUS_FILE', 'status.json')
 
     # first execution
-    check_notebook(api_url, token, user, status_file)
+    check_notebook(api_url, token, user, status_file, delete=False)
 
     if os.environ.get('SINGLE_EXECUTION', '').upper() == 'TRUE':
         sys.exit()
