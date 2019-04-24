@@ -1,0 +1,15 @@
+charts:
+  - name: notebooks-monitor
+    imagePrefix: eginotebooks/svc-
+    repo:
+      git: egi-foundation/egi-notebooks-chart
+      published: https://egi-foundation.github.io/egi-notebooks-chart
+
+    images:
+      monitor-web:
+        valuesPath: web.image
+        contextPath: web
+
+      monitor-mon:
+        valuesPath: mon.image
+        contextPath: monitor 
