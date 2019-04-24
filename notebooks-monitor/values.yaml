@@ -1,0 +1,30 @@
+service:
+  user: monitor
+  name: status
+  api_token:
+
+mon:
+  image:
+    name: eginotebooks/svc-monitor-mon
+    tag: '0.1.0-449ed3b'
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128mi
+    requests:
+      cpu: 100m
+      memory: 128mi
+
+web:
+  image:
+    name: eginotebooks/svc-monitor-web
+    tag: '0.1.0-135ad7a'
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128mi
+    requests:
+      cpu: 100m
+      memory: 128mi
