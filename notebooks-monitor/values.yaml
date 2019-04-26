@@ -11,10 +11,10 @@ mon:
   resources:
     limits:
       cpu: 100m
-      memory: 128mi
+      memory: 128M
     requests:
       cpu: 100m
-      memory: 128mi
+      memory: 128M
 
 web:
   image:
@@ -24,7 +24,7 @@ web:
   resources:
     limits:
       cpu: 100m
-      memory: 128mi
+      memory: 128M
     requests:
       cpu: 100m
-      memory: 128mi
+      memory: 128M
