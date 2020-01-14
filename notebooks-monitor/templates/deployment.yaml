@@ -40,7 +40,7 @@ spec:
 {{ toYaml .Values.monitor.ui.resources | indent 12 }}
         - name: worker
           image: "{{ .Values.monitor.worker.image.name }}:{{ .Values.monitor.worker.image.tag }}"
-          imagePullPolicy: {{ .Values.monintor.worker.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.monitor.worker.image.pullPolicy }}
           env:
             - name: JUPYTERHUB_API_URL
               value: "http://hub.{{ $.Release.Namespace }}.svc.cluster.local:8081/hub/api"
