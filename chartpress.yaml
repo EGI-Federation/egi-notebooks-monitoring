@@ -6,10 +6,10 @@ charts:
       published: https://egi-foundation.github.io/egi-notebooks-chart
 
     images:
-      monitor-web:
-        valuesPath: web.image
-        contextPath: web
+      monitor-ui:
+        valuesPath: monitor.ui.image
+        contextPath: ui
 
-      monitor-mon:
-        valuesPath: mon.image
-        contextPath: monitor 
+      monitor-worker:
+        valuesPath: monitor.worker.image
+        contextPath: worker
