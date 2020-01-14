@@ -1,1 +1,1 @@
-Monitor should be now available at https://<your notebook domain>/services/{{ .Values.service.name }}
+Monitor should be now available at https://<your notebook domain>/services/status

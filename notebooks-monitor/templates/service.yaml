@@ -9,10 +9,10 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   ports:
-    - port: 80 
+    - port: 80
       targetPort: http
       protocol: TCP
       name: http
   selector:
-    app: hubmonitor 
+    app: hubmonitor
     release: {{ .Release.Name }}

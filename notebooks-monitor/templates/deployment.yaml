@@ -1,32 +1,32 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: monitor 
+  name: monitor
   labels:
-    app: hubmonitor 
+    app: hubmonitor
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hubmonitor 
+      app: hubmonitor
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
         name: monitor
-        app: hubmonitor 
+        app: hubmonitor
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
     spec:
       containers:
         - name: ui
-          image: "{{ .Values.web.image.name }}:{{ .Values.web.image.tag }}"
-          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          image: "{{ .Values.monitor.ui.image.name }}:{{ .Values.monitor.ui.image.tag }}"
+          imagePullPolicy: {{ .Values.monitor.ui.image.pullPolicy }}
           env:
             - name: JUPYTERHUB_SERVICE_PREFIX
-              value: "/services/{{ .Values.service.name }}"
+              value: "/services/status"
             - name: STATUS_FILE
               value: /shared/status.json
           volumeMounts:
@@ -37,18 +37,18 @@ spec:
               containerPort: 80
               protocol: TCP
           resources:
-{{ toYaml .Values.web.resources | indent 12 }}
-        - name: mon
-          image: "{{ .Values.mon.image.name }}:{{ .Values.mon.image.tag }}"
-          imagePullPolicy: {{ .Values.mon.image.pullPolicy }}
+{{ toYaml .Values.monitor.ui.resources | indent 12 }}
+        - name: worker
+          image: "{{ .Values.monitor.worker.image.name }}:{{ .Values.monitor.worker.image.tag }}"
+          imagePullPolicy: {{ .Values.monintor.worker.image.pullPolicy }}
           env:
             - name: JUPYTERHUB_API_URL
               value: "http://hub.{{ $.Release.Namespace }}.svc.cluster.local:8081/hub/api"
             # this is a secret...
             - name: JUPYTERHUB_API_TOKEN
-              value: "{{ .Values.service.api_token}}"
+              value: "{{ .Values.hub.services.status.apiToken}}"
             - name: JUPYTERHUB_USER
-              value: "{{ .Values.service.user }}"
+              value: "{{ .Values.hub.services.status.user }}"
               value: monitor
             - name: STATUS_FILE
               value: /shared/status.json
@@ -56,7 +56,7 @@ spec:
             - name: shared-data
               mountPath: /shared
           resources:
-{{ toYaml .Values.mon.resources | indent 12 }}
+{{ toYaml .Values.monitor.worker.resources | indent 12 }}
       volumes:
         - name: shared-data
           emptyDir: {}
