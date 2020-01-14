@@ -21,4 +21,5 @@ jobs:
     - CHARTPRESS_OPT=""
     - if [ "x$TRAVIS_TAG" != "x" ]; then CHARTPRESS_OPT="$CHARTPRESS_OPT --tag $TRAVIS_TAG"; fi
     - if [ "x$TRAVIS_COMMIT_RANGE" != "x" ]; then CHARTPRESS_OPT="$CHARTPRESS_OPT --commit-range $TRAVIS_COMMIT_RANGE"; fi
+    - mkdir /tmp/kk; helm package notebooks-monitor --dependency-update --destination /tmp/kk
     - chartpress $CHARTPRESS_OPT --push --publish-chart
