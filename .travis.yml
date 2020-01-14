@@ -11,7 +11,7 @@ jobs:
     install:
     - pip3 install -r dev-requirements.txt
     - mkdir -p bin
-    - curl -ssL https://get.helm.sh/helm-v3.0.2-linux-arm.tar.gz
+    - curl -ssL https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz
       | tar -xz -C . --strip-components 1 linux-amd64/helm
     - chmod +x helm
     - sudo mv helm /usr/local/bin
