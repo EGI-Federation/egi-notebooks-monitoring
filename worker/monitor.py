@@ -83,7 +83,7 @@ if __name__ == "__main__":
     status_file = os.environ.get("STATUS_FILE", "status.json")
 
     # timeout in seconds
-    timeout = os.environt.get("SPAWN_TIMEOUT", 600)
+    timeout = os.environ.get("SPAWN_TIMEOUT", 600)
 
     # first execution
     check_notebook(api_url, token, user, status_file, timeout, delete=True)
