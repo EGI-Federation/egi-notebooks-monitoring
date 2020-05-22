@@ -10,7 +10,7 @@ from requests.exceptions import RequestException
 import schedule
 
 
-def spawn_notebook(api_url, token, user, delete=True):
+def spawn_notebook(api_url, token, user, timeout=600, delete=True):
     start = time.time()
     user_url = urljoin(api_url, 'users/%s' % user)
     server_url = urljoin(api_url, 'users/%s/server' % user)
@@ -32,9 +32,9 @@ def spawn_notebook(api_url, token, user, delete=True):
     r = requests.post(server_url, headers=headers)
     if r.status_code not in [202, 201]:
         return 'CRITICAL', 'Unable to spawn new server: %s' % r.text
-    # wait ~5min for server to be fully started
+    # wait for server to be fully started
     server_ready = False
-    for i in range(60):
+    for i in range(timeout/5):
         r = requests.get(user_url, headers=headers)
         if r.status_code != 200:
             return 'CRITICAL', 'Unable to query user: %s' % r.text
@@ -52,13 +52,13 @@ def spawn_notebook(api_url, token, user, delete=True):
     return 'CRITICAL', 'Server did not start in %.2f seconds' % elapsed
 
 
-def check_notebook(api_url, token, user, status_file, delete=True):
+def check_notebook(api_url, token, user, status_file, timeout, delete=True):
     logging.info('Checking notebooks spawning!')
     status = {
         'time': time.time(),
     }
     try:
-        code, msg = spawn_notebook(api_url, token, user, delete)
+        code, msg = spawn_notebook(api_url, token, user, timeout, delete)
         status['code'] = code
         status['msg'] = msg
     except RequestException as e:
@@ -82,13 +82,16 @@ if __name__ == '__main__':
     user = os.environ.get('JUPYTERHUB_USER', 'monitor')
     status_file = os.environ.get('STATUS_FILE', 'status.json')
 
+    # timeout in seconds
+    timeout = os.environt.get('SPAWN_TIMEOUT', 600)
+
     # first execution
-    check_notebook(api_url, token, user, status_file, delete=False)
+    check_notebook(api_url, token, user, status_file, timeout, delete=True)
 
     if os.environ.get('SINGLE_EXECUTION', '').upper() == 'TRUE':
         sys.exit()
 
-    schedule.every(1).hour.do(check_notebook, api_url, token, user, status_file)
+    schedule.every(1).hour.do(check_notebook, api_url, token, user, status_file, timeout)
     while True:
         schedule.run_pending()
         time.sleep(10)
