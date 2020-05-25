@@ -16,9 +16,9 @@ jobs:
     - chmod +x helm
     - sudo mv helm /usr/local/bin
     script:
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - black --check .
     - CHARTPRESS_OPT=""
+    - if [ "x$DOCKER_USERNAME" != "x" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; CHARTPRESS_OPT="$CHARTPRESS_OPT --push --publish-chart"; fi
     - if [ "x$TRAVIS_TAG" != "x" ]; then CHARTPRESS_OPT="$CHARTPRESS_OPT --tag $TRAVIS_TAG"; fi
-    - if [ "x$TRAVIS_COMMIT_RANGE" != "x" ]; then CHARTPRESS_OPT="$CHARTPRESS_OPT --commit-range $TRAVIS_COMMIT_RANGE"; fi
-    - mkdir /tmp/kk; helm package notebooks-monitor --dependency-update --destination /tmp/kk
-    - chartpress $CHARTPRESS_OPT --push --publish-chart
+    - mkdir /tmp/foo; helm package notebooks-monitor --dependency-update --destination /tmp/foo
+    - chartpress $CHARTPRESS_OPT

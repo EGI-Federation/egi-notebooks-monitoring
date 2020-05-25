@@ -6,6 +6,8 @@ hub:
 
 monitor:
   worker:
+    debug: false
+    timeout: 600
     image:
       name: eginotebooks/svc-monitor-mon
       tag: '0.1.0-449ed3b'

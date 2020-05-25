@@ -52,6 +52,12 @@ spec:
               value: monitor
             - name: STATUS_FILE
               value: /shared/status.json
+            - name: SPAWN_TIMEOUT
+              value: "{{ .Values.monitor.worker.timeout }}"
+            {{- if .Values.monitoring.worker.debug }}
+            - name: DEBUG
+              value: "TRUE"
+            {{- end }}
           volumeMounts:
             - name: shared-data
               mountPath: /shared
