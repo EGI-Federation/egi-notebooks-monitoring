@@ -34,7 +34,7 @@ def spawn_notebook(api_url, token, user, timeout=600, delete=True):
         return "CRITICAL", "Unable to spawn new server: %s" % r.text
     #  wait for server to be fully started
     server_ready = False
-    for i in range(timeout / 5):
+    for i in range(int(timeout / 5)):
         r = requests.get(user_url, headers=headers)
         if r.status_code != 200:
             return "CRITICAL", "Unable to query user: %s" % r.text
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     status_file = os.environ.get("STATUS_FILE", "status.json")
 
     # timeout in seconds
-    timeout = os.environ.get("SPAWN_TIMEOUT", 600)
+    timeout = int(os.environ.get("SPAWN_TIMEOUT", 600))
 
     # first execution
     check_notebook(api_url, token, user, status_file, timeout, delete=True)
