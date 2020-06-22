@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: monitor
@@ -54,7 +54,7 @@ spec:
               value: /shared/status.json
             - name: SPAWN_TIMEOUT
               value: "{{ .Values.monitor.worker.timeout }}"
-            {{- if .Values.monitoring.worker.debug }}
+            {{- if .Values.monitor.worker.debug }}
             - name: DEBUG
               value: "TRUE"
             {{- end }}
