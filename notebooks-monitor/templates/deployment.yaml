@@ -47,7 +47,14 @@ spec:
               value: "http://hub.{{ $.Release.Namespace }}.svc.cluster.local:8081/hub/api"
             # this is a secret...
             - name: JUPYTERHUB_API_TOKEN
-              value: "{{ .Values.hub.services.status.apiToken}}"
+              valueFrom:
+                secretKeyRef:
+                  # TODO: This shouldn't be hardcoded, but we do not have the
+                  # template from the JH helm chart right now
+                  # so we should instead of using the current approach
+                  # do extend that themplate
+                  name: hub
+                  key: hub.services.status.apiToken
             - name: JUPYTERHUB_USER
               value: "{{ .Values.hub.services.status.user }}"
               value: monitor
