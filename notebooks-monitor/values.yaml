@@ -2,7 +2,6 @@ hub:
   services:
     status:
       user: monitor
-      apiToken:
 
 monitor:
   worker:
