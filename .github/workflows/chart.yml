@@ -34,6 +34,8 @@ jobs:
       if: github.event_name != 'pull_request'
     - name: Build chart
       run: |
+        git config user.name "egibot"
+        git config user.email "egibot@egi.eu"
         mkdir charts
         chartpress
         helm package notebooks-monitor --dependency-update --destination charts
@@ -42,10 +44,7 @@ jobs:
       with:
         app_id: ${{ secrets.APP_ID }}
         private_key: ${{ secrets.APP_PRIVATE_KEY }}
-    - name: get git ready
-      run: |
-        git config user.name "egibot"
-        git config user.email "egibot@egi.eu"
+      if: github.event_name != 'pull_request'
     - name: Push chart
       env:
         GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
