@@ -1,10 +1,10 @@
-from datetime import timedelta
 import json
 import os
 import time
+from datetime import timedelta
 
 from babel.dates import format_timedelta
-from flask import Flask, Response, request, render_template
+from flask import Flask, Response, render_template, request
 
 app = Flask(__name__)
 
@@ -16,7 +16,8 @@ class PrefixMiddleware(object):
 
     def __call__(self, environ, start_response):
         if environ["PATH_INFO"].startswith(self.prefix):
-            environ["PATH_INFO"] = environ["PATH_INFO"][len(self.prefix) :]
+            new_path = environ["PATH_INFO"][len(self.prefix) :]  # noqa: E203
+            environ["PATH_INFO"] = new_path
             environ["SCRIPT_NAME"] = self.prefix
             return self.app(environ, start_response)
         else:

@@ -1,0 +1,53 @@
+name: Create helm chart
+
+on:
+  push:
+    # only pushes on master so we don't push intermediate results
+    branches:
+    - master
+  pull_request:
+
+jobs:
+  chart:
+    name: Create chart
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: check out
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Set up python
+      uses: actions/setup-python@v2
+    - name: Install requirements
+      run: |
+        pip install -r dev-requirements.txt
+    - name: Install Helm
+      uses: azure/setup-helm@v1
+      with:
+        version: v3.7.0
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      if: github.event_name != 'pull_request'
+    - name: Build chart
+      run: |
+        git config user.name "egibot"
+        git config user.email "egibot@egi.eu"
+        mkdir charts
+        chartpress
+        helm package notebooks-monitor --dependency-update --destination charts
+    - uses: tibdex/github-app-token@v1
+      id: generate_token
+      with:
+        app_id: ${{ secrets.APP_ID }}
+        private_key: ${{ secrets.APP_PRIVATE_KEY }}
+      if: github.event_name != 'pull_request'
+    - name: Push chart
+      env:
+        GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+      run: |
+        chartpress --push --publish-chart
+      if: github.event_name != 'pull_request'

@@ -1,10 +1,10 @@
 FROM python:3-alpine
 
-RUN apk add --no-cache tini
+RUN apk add --no-cache tini=0.19.0-r0
 
 COPY requirements.txt /
 
-RUN pip install -r /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
 
 COPY monitor.py /
 
@@ -15,4 +15,5 @@ ENV STATUS_FILE /status.json
 
 ENTRYPOINT ["/sbin/tini", "--"]
 
-CMD python /monitor.py
+CMD ["python", "/monitor.py"]
+
