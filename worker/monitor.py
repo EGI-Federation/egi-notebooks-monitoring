@@ -6,8 +6,8 @@ import time
 from urllib.parse import urljoin
 
 import requests
-from requests.exceptions import RequestException
 import schedule
+from requests.exceptions import RequestException
 
 
 def spawn_notebook(api_url, token, user, timeout=600, delete=True):

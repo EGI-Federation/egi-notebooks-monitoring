@@ -7,7 +7,8 @@ This is the monitor that will try to perform the following actions every hour:
 - Delete the server
 
 And writes the result into a json file with this structure:
-```
+
+```json
 {
   "time": <time in seconds since UNIX epoch>
   "code": "<OK|WARNING|CRITICAL>",
@@ -15,11 +16,11 @@ And writes the result into a json file with this structure:
 }
 ```
 
-## Environment 
+## Environment
 
 The probe expects the following variables in the environment:
 - `JUPYTERHUB_API_URL`: URL where the JupyterHub API is found
-- `JUPYTERHUB_API_TOKEN`: token to authenticat against the API 
+- `JUPYTERHUB_API_TOKEN`: token to authenticat against the API
 - `JUPYTERHUB_USER`: user to use for monitoring
 - `STATUS_FILE`: where to store the json with the result of monitoring (default: `status.json`)
 - `DEBUG`: when equal to `TRUE` will produce extra logging information
