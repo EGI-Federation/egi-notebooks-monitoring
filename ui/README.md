@@ -1,4 +1,4 @@
-# Web front-end to monitor
+# Web frontend to monitor
 
 This is a simple flask application that takes a json file with the status and shows it when requested
 
