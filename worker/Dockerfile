@@ -1,6 +1,6 @@
 FROM python:3-alpine
 
-RUN apk add --no-cache tini=0.19.0-r0
+RUN apk add --no-cache tini=0.19.0-r3
 
 COPY requirements.txt /
 
@@ -10,7 +10,7 @@ COPY monitor.py /
 
 ENV JUPYTERHUB_API_URL https://localhost/
 ENV JUPYTERHUB_API_TOKEN secret
-ENV JUPYTERHUB_API_USER monitoring 
+ENV JUPYTERHUB_API_USER monitoring
 ENV STATUS_FILE /status.json
 
 ENTRYPOINT ["/sbin/tini", "--"]
