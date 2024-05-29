@@ -20,6 +20,7 @@ spec:
         app: hubmonitor
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
+        hub.jupyter.org/network-access-hub: "true"
     spec:
       containers:
         - name: ui
