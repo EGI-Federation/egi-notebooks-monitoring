@@ -60,26 +60,24 @@ spec:
           env:
             - name: SERVICE_TYPE
               value: "{{ .Values.monitor.worker.serviceType }}"
+            - name: STATUS_FILE
+              value: /shared/status.json
 {{- if eq .Values.monitor.worker.serviceType "jupyterhub" }}
             - name: MONITORED_URL
               value: "http://hub:8081/hub/api"
-{{- else }}
-            - name: MONITORED_URL
-              value: "http://binder/"
-{{- end }}
-{{- if eq .Values.monitor.worker.serviceType "jupyterhub" }}
             - name: JUPYTERHUB_API_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: "{{ .Values.monitor.worker.secret.name }}"
                   key: "{{ .Values.monitor.worker.secret.key }}"
-{{- end }}
             - name: JUPYTERHUB_USER
               value: "{{ .Values.hub.services.status.user }}"
-            - name: STATUS_FILE
-              value: /shared/status.json
             - name: SPAWN_TIMEOUT
               value: "{{ .Values.monitor.worker.timeout }}"
+{{- else }}
+            - name: MONITORED_URL
+              value: "http://binder/"
+{{- end }}
 {{- if .Values.monitor.worker.debug }}
             - name: DEBUG
               value: "TRUE"
