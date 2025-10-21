@@ -1,3 +1,4 @@
+---
 charts:
   - name: notebooks-monitor
     imagePrefix: eginotebooks/svc-
