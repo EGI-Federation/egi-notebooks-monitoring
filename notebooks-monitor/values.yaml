@@ -1,3 +1,4 @@
+---
 hub:
   services:
     status:
@@ -5,11 +6,16 @@ hub:
 
 monitor:
   worker:
+    # this can be either jupyterhub or binderhub
+    serviceType: jupyterhub
+    secret:
+      name: hub
+      key: hub.services.status.apiToken
     debug: false
     timeout: 600
     image:
-      name: eginotebooks/svc-monitor-mon
-      tag: '0.1.0-449ed3b'
+      name: registry.egi.eu/vo.notebooks.egi.eu/svc-accounting-monitor
+      tag: ""
       pullPolicy: IfNotPresent
     resources:
       limits:
@@ -21,8 +27,8 @@ monitor:
 
   ui:
     image:
-      name: eginotebooks/svc-monitor-web
-      tag: '0.1.0-135ad7a'
+      name: registry.egi.eu/vo.notebooks.egi.eu/svc-monitoring-ui
+      tag: ""
       pullPolicy: IfNotPresent
     resources:
       limits:

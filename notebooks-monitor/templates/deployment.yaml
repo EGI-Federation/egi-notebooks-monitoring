@@ -3,29 +3,35 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: monitor
+  namespace: "{{ .Release.Namespace }}"
   labels:
     app: hubmonitor
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: hubmonitor
-      release: {{ .Release.Name }}
+      release: "{{ .Release.Name }}"
   template:
     metadata:
       labels:
         name: monitor
         app: hubmonitor
-        release: {{ .Release.Name }}
-        heritage: {{ .Release.Service }}
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
         hub.jupyter.org/network-access-hub: "true"
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: ui
           image: "{{ .Values.monitor.ui.image.name }}:{{ .Values.monitor.ui.image.tag }}"
-          imagePullPolicy: {{ .Values.monitor.ui.image.pullPolicy }}
+          imagePullPolicy: "{{ .Values.monitor.ui.image.pullPolicy }}"
           env:
             - name: JUPYTERHUB_SERVICE_PREFIX
               value: "/services/status"
@@ -36,42 +42,61 @@ spec:
               mountPath: /shared
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8080
               protocol: TCP
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          {{- with .Values.monitor.ui.resources }}
           resources:
-{{ toYaml .Values.monitor.ui.resources | indent 12 }}
+            {{- . | toYaml | nindent 12 }}
+          {{- end }}
         - name: worker
           image: "{{ .Values.monitor.worker.image.name }}:{{ .Values.monitor.worker.image.tag }}"
           imagePullPolicy: {{ .Values.monitor.worker.image.pullPolicy }}
           env:
-            - name: JUPYTERHUB_API_URL
-              value: "http://hub.{{ $.Release.Namespace }}.svc.cluster.local:8081/hub/api"
-            # this is a secret...
+            - name: SERVICE_TYPE
+              value: "{{ .Values.monitor.worker.serviceType }}"
+{{- if eq .Values.monitor.worker.serviceType "jupyterhub" }}
+            - name: MONITORED_URL
+              value: "http://hub:8081/hub/api"
+{{- else }}
+            - name: MONITORED_URL
+              value: "http://binder/"
+{{- end }}
+{{- if eq .Values.monitor.worker.serviceType "jupyterhub" }}
             - name: JUPYTERHUB_API_TOKEN
               valueFrom:
                 secretKeyRef:
-                  # TODO: This shouldn't be hardcoded, but we do not have the
-                  # template from the JH helm chart right now
-                  # so we should instead of using the current approach
-                  # do extend that themplate
-                  name: hub
-                  key: hub.services.status.apiToken
+                  name: "{{ .Values.monitor.worker.secret.name }}"
+                  key: "{{ .Values.monitor.worker.secret.key }}"
+{{- end }}
             - name: JUPYTERHUB_USER
               value: "{{ .Values.hub.services.status.user }}"
-              value: monitor
             - name: STATUS_FILE
               value: /shared/status.json
             - name: SPAWN_TIMEOUT
               value: "{{ .Values.monitor.worker.timeout }}"
-            {{- if .Values.monitor.worker.debug }}
+{{- if .Values.monitor.worker.debug }}
             - name: DEBUG
               value: "TRUE"
-            {{- end }}
+{{- end }}
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
           volumeMounts:
             - name: shared-data
               mountPath: /shared
+          {{- with .Values.monitor.worker.resources }}
           resources:
-{{ toYaml .Values.monitor.worker.resources | indent 12 }}
+            {{- . | toYaml | nindent 12 }}
+          {{- end }}
       volumes:
         - name: shared-data
           emptyDir: {}
