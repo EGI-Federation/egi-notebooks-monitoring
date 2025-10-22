@@ -53,7 +53,7 @@ def spawn_notebook(api_url, token, user, timeout=600, delete=True):
     return "CRITICAL", f"Server did not start in {elapsed:.2f} seconds"
 
 
-def check_notebook(api_url, token, user, status_file, timeout, delete=True):
+def check_notebook(api_url, token, user, timeout, delete=True):
     logging.info("Checking notebooks spawning!")
     status = {}
     try:
