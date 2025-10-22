@@ -14,7 +14,7 @@ monitor:
     debug: false
     timeout: 600
     image:
-      name: registry.egi.eu/vo.notebooks.egi.eu/svc-accounting-monitor
+      name: registry.egi.eu/vo.notebooks.egi.eu/svc-monitor-worker
       tag: ""
       pullPolicy: IfNotPresent
     resources:
@@ -27,7 +27,7 @@ monitor:
 
   ui:
     image:
-      name: registry.egi.eu/vo.notebooks.egi.eu/svc-monitoring-ui
+      name: registry.egi.eu/vo.notebooks.egi.eu/svc-monitor-ui
       tag: ""
       pullPolicy: IfNotPresent
     resources:
