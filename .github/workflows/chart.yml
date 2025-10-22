@@ -56,8 +56,8 @@ jobs:
           git config --global user.email "egibot@egi.eu"
           # update version, build image, push image
           chartpress --push
-          helm package notebooks-accounting
-          f="$(find . -maxdepth 1 -name notebooks-accounting-\*.tgz | head -n 1)"
+          helm package notebooks-monitoring
+          f="$(find . -maxdepth 1 -name notebooks-monitoring-\*.tgz | head -n 1)"
           helm push "$f" "oci://${VARS_REGISTRY_SERVER}/${VARS_REGISTRY_CHART_PROJECT}"
         if: github.event_name != 'pull_request'
         env:
