@@ -16,7 +16,7 @@ monitor:
     timeout: 600
     image:
       name: registry.egi.eu/vo.notebooks.egi.eu/svc-monitor-worker
-      tag: ""
+      tag: "latest"
       pullPolicy: IfNotPresent
     resources:
       limits:
@@ -29,7 +29,7 @@ monitor:
   ui:
     image:
       name: registry.egi.eu/vo.notebooks.egi.eu/svc-monitor-ui
-      tag: ""
+      tag: "latest"
       pullPolicy: IfNotPresent
     resources:
       limits:
