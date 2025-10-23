@@ -8,10 +8,8 @@ RUN pip install --no-cache-dir -r /requirements.txt
 
 COPY monitor.py /
 
-ENV JUPYTERHUB_API_URL https://localhost/
-ENV JUPYTERHUB_API_TOKEN secret
-ENV JUPYTERHUB_API_USER monitoring
-ENV STATUS_FILE /status.json
+RUN adduser -D -u 1000 python
+USER python
 
 ENTRYPOINT ["/sbin/tini", "--"]
 

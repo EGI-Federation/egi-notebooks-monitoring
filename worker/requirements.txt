@@ -1,2 +1,2 @@
-requests
-schedule
+httpx~=0.28.1
+schedule~=1.2.2

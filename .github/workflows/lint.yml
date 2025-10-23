@@ -1,7 +1,9 @@
 ---
 name: Lint
 
-on: [push, pull_request]
+on: [pull_request]
+
+permissions: { }
 
 jobs:
   super-lint:
@@ -11,16 +13,23 @@ jobs:
     steps:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0
 
       # Runs the Super-Linter action
       - name: Run Super-Linter
-        uses: github/super-linter@v4
+        uses: super-linter/super-linter/slim@2bdd90ed3262e023ac84bf8fe35dc480721fc1f2
         env:
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Fail on errors
           DISABLE_ERRORS: false
           # this is a bit too much for this repo
-          VALIDATE_KUBERNETES_KUBEVAL: false
+          VALIDATE_PYTHON_PYLINT: false
+          VALIDATE_CHECKOV: false
+          VALIDATE_TRIVY: false
+          VALIDATE_YAML_PRETTIER: false
           VALIDATE_YAML: false
+          VALIDATE_KUBERNETES_KUBECONFORM: false

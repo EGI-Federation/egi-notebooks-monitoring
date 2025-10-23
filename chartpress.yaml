@@ -1,9 +1,7 @@
+---
 charts:
   - name: notebooks-monitor
-    imagePrefix: eginotebooks/svc-
-    repo:
-      git: egi-federation/egi-notebooks-chart
-      published: https://egi-federation.github.io/egi-notebooks-chart
+    imagePrefix: registry.egi.eu/vo.notebooks.egi.eu/svc-
 
     images:
       monitor-ui:

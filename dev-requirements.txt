@@ -1,2 +1,1 @@
-black
-chartpress
+chartpress~=2.3.0

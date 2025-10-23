@@ -1,15 +1,31 @@
+---
 hub:
+  baseUrl: /
   services:
     status:
       user: monitor
+      url: "http://status-web/"
+
+# binder has the hub information nested
+# into jupyterhub
+jupyterhub:
+  hub:
+    baseUrl: /hub
+    services:
+      status:
+        url: "http://status-web"
 
 monitor:
+  # the name of the service in the hub
+  serviceName: status
   worker:
+    # this can be either jupyterhub or binderhub
+    serviceType: jupyterhub
     debug: false
     timeout: 600
     image:
-      name: eginotebooks/svc-monitor-mon
-      tag: '0.1.0-449ed3b'
+      name: registry.egi.eu/vo.notebooks.egi.eu/svc-monitor-worker
+      tag: "latest"
       pullPolicy: IfNotPresent
     resources:
       limits:
@@ -21,8 +37,8 @@ monitor:
 
   ui:
     image:
-      name: eginotebooks/svc-monitor-web
-      tag: '0.1.0-135ad7a'
+      name: registry.egi.eu/vo.notebooks.egi.eu/svc-monitor-ui
+      tag: "latest"
       pullPolicy: IfNotPresent
     resources:
       limits:
