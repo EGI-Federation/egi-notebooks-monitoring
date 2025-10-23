@@ -30,3 +30,25 @@ Create chart name and version as used by the chart label.
 {{- define "notebook-monitor.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{/*
+Get the right hub variables
+*/}}
+{{- define "hub-prefix" -}}
+{{- if eq .Values.monitor.worker.serviceType "jupyterhub" -}}
+{{- printf "%s/services/%s" (.Values.hub.baseUrl | trimSuffix "/")  .Values.monitor.serviceName -}}
+{{- else -}}
+{{- printf "%s/services/%s" (.Values.jupyterhub.hub.baseUrl | trimSuffix "/")
+	   .Values.monitor.serviceName -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "service-name" -}}
+{{- if eq .Values.monitor.worker.serviceType "jupyterhub" -}}
+{{- (urlParse (index (index .Values.hub.services
+		      .Values.monitor.serviceName) "url")).host -}}
+{{- else -}}
+{{- (urlParse (index (index .Values.jupyterhub.hub.services
+		     .Values.monitor.serviceName) "url")).host -}}
+{{- end -}}
+{{- end -}}

@@ -2,9 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name:
-    '{{ (urlParse (index (index .Values.hub.services
-    .Values.monitor.serviceName) "url")).host }}'
+  name: '{{ template "service-name" . }}'
   namespace: "{{ .Release.Namespace }}"
   labels:
     app: '{{ template "notebook-monitor.name" . }}'

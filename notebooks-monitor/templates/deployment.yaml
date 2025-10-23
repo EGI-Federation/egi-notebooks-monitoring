@@ -34,7 +34,7 @@ spec:
           imagePullPolicy: "{{ .Values.monitor.ui.image.pullPolicy }}"
           env:
             - name: JUPYTERHUB_SERVICE_PREFIX
-              value: '{{ .Values.hub.baseUrl | trimSuffix "/" }}/services/{{ .Values.monitor.serviceName }}'
+              value: '{{ template "hub-prefix"  . }}'
             - name: STATUS_FILE
               value: /shared/status.json
           volumeMounts:

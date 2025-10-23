@@ -6,6 +6,15 @@ hub:
       user: monitor
       url: "http://status-web/"
 
+# binder has the hub information nested
+# into jupyterhub
+jupyterhub:
+  hub:
+    baseUrl: /hub
+    services:
+      status:
+        url: "http://status-web"
+
 monitor:
   # the name of the service in the hub
   serviceName: status
