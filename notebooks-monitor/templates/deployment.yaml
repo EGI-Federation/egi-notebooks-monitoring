@@ -34,7 +34,7 @@ spec:
           imagePullPolicy: "{{ .Values.monitor.ui.image.pullPolicy }}"
           env:
             - name: JUPYTERHUB_SERVICE_PREFIX
-              value: "/services/status"
+              value: '{{ .Values.hub.baseUrl | trimSuffix "/" }}/services/{{ .Values.monitor.serviceName }}'
             - name: STATUS_FILE
               value: /shared/status.json
           volumeMounts:
@@ -68,8 +68,8 @@ spec:
             - name: JUPYTERHUB_API_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: "{{ .Values.monitor.worker.secret.name }}"
-                  key: "{{ .Values.monitor.worker.secret.key }}"
+                  name: hub
+                  key: hub.services.{{ .Values.monitor.serviceName }}.apiToken
             - name: JUPYTERHUB_USER
               value: "{{ .Values.hub.services.status.user }}"
             - name: SPAWN_TIMEOUT

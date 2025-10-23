@@ -1,16 +1,17 @@
 ---
 hub:
+  baseUrl: /
   services:
     status:
       user: monitor
+      url: "http://status-web/"
 
 monitor:
+  # the name of the service in the hub
+  serviceName: status
   worker:
     # this can be either jupyterhub or binderhub
     serviceType: jupyterhub
-    secret:
-      name: hub
-      key: hub.services.status.apiToken
     debug: false
     timeout: 600
     image:
