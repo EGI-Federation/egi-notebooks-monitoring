@@ -62,7 +62,7 @@ spec:
               value: "{{ .Values.monitor.worker.serviceType }}"
             - name: STATUS_FILE
               value: /shared/status.json
-{{- if eq .Values.monitor.worker.serviceType "jupyterhub" }}
+          {{- if eq .Values.monitor.worker.serviceType "jupyterhub" }}
             - name: MONITORED_URL
               value: "http://hub:8081/hub/api"
             - name: JUPYTERHUB_API_TOKEN
@@ -74,14 +74,14 @@ spec:
               value: "{{ .Values.hub.services.status.user }}"
             - name: SPAWN_TIMEOUT
               value: "{{ .Values.monitor.worker.timeout }}"
-{{- else }}
+          {{- else }}
             - name: MONITORED_URL
               value: "http://binder/"
-{{- end }}
-{{- if .Values.monitor.worker.debug }}
+          {{- end }}
+          {{- if .Values.monitor.worker.debug }}
             - name: DEBUG
               value: "TRUE"
-{{- end }}
+          {{- end }}
           securityContext:
             capabilities:
               drop:
