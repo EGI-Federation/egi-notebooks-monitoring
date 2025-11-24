@@ -7,12 +7,13 @@ from functools import partial
 from urllib.parse import urljoin
 
 import schedule
-from httpx import Client, RequestError
+from httpx import Client, HTTPTransport, RequestError
 
 
 def spawn_notebook(api_url, token, user, timeout=600, delete=True):
     start = time.time()
-    client = Client(headers={"Authorization": f"token {token}"})
+    transport = HTTPTransport(retries=3)
+    client = Client(transport=transport, headers={"Authorization": f"token {token}"})
 
     user_url = urljoin(api_url, f"users/{user}")
     server_url = urljoin(api_url, f"users/{user}/server")
@@ -26,7 +27,7 @@ def spawn_notebook(api_url, token, user, timeout=600, delete=True):
     else:
         # first clean up any previously existing server
         if r.json()["servers"].get("", {}):
-            r = client.delete(server_url)
+            r = client.delete(server_url, timeout=40.0)
             # wait a bit for it to stop
             time.sleep(60)
     # start a new server
@@ -44,9 +45,10 @@ def spawn_notebook(api_url, token, user, timeout=600, delete=True):
             if server_ready:
                 break
         time.sleep(5)
-    #  delete the server, don't care much about the result?
+    # delete the server, don't care much about the result?
+    # increase the timeout as it may need some extra time
     if delete:
-        client.delete(server_url)
+        client.delete(server_url, timeout=40.0)
     elapsed = time.time() - start
     if server_ready:
         return "OK", f"Spawned server in {elapsed:.2f} seconds"
@@ -61,6 +63,7 @@ def check_notebook(api_url, token, user, timeout, delete=True):
         status["code"] = code
         status["msg"] = msg
     except RequestError as e:
+        logging.warning("Request error while checking notebooks: %s" % e)
         status["code"] = "CRITICAL"
         status["msg"] = f"Error in checking notebooks: {e}"
     return status
@@ -69,7 +72,8 @@ def check_notebook(api_url, token, user, timeout, delete=True):
 def check_binder(binder_url):
     logging.info("Checking binder health!")
     status = {}
-    client = Client()
+    transport = HTTPTransport(retries=3)
+    client = Client(transport=transport)
     try:
         r = client.get(urljoin(binder_url, "health"))
         ok = r.json().get("ok", "")
