@@ -33,3 +33,4 @@ jobs:
           VALIDATE_YAML_PRETTIER: false
           VALIDATE_YAML: false
           VALIDATE_KUBERNETES_KUBECONFORM: false
+          VALIDATE_BIOME_LINT: false

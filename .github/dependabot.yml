@@ -6,6 +6,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
   - package-ecosystem: "pip"
     directories:
       - "/"
@@ -13,3 +15,5 @@ updates:
       - "/worker"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
