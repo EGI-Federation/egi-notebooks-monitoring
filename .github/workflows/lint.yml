@@ -20,7 +20,7 @@ jobs:
 
       # Runs the Super-Linter action
       - name: Run Super-Linter
-        uses: super-linter/super-linter/slim@2bdd90ed3262e023ac84bf8fe35dc480721fc1f2
+        uses: super-linter/super-linter/slim@47984f49b4e87383eed97890fe2dca6063bbd9c3
         env:
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -33,3 +33,4 @@ jobs:
           VALIDATE_YAML_PRETTIER: false
           VALIDATE_YAML: false
           VALIDATE_KUBERNETES_KUBECONFORM: false
+          VALIDATE_BIOME_LINT: false
