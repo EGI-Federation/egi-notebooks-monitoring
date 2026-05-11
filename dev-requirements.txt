@@ -1,1 +1,1 @@
-chartpress~=2.3.0
+chartpress~=2.4.0
