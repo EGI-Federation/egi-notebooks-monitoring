@@ -7,7 +7,7 @@ from functools import partial
 from urllib.parse import urljoin
 
 import schedule
-from httpx import Client, HTTPTransport, RequestError
+from httpx import Client, HTTPTransport, RequestError, TimeoutException
 
 
 def spawn_notebook(api_url, token, user, timeout=600, delete=True):
@@ -31,7 +31,7 @@ def spawn_notebook(api_url, token, user, timeout=600, delete=True):
             # wait a bit for it to stop
             time.sleep(60)
     # start a new server
-    r = client.post(server_url)
+    r = client.post(server_url, timeout=40.0)
     if r.status_code not in [202, 201]:
         return "CRITICAL", f"Unable to spawn new server: {r.text}"
     #  wait for server to be fully started
@@ -58,10 +58,19 @@ def spawn_notebook(api_url, token, user, timeout=600, delete=True):
 def check_notebook(api_url, token, user, timeout, delete=True):
     logging.info("Checking notebooks spawning!")
     status = {}
+    attempts = 0
     try:
-        code, msg = spawn_notebook(api_url, token, user, timeout, delete)
-        status["code"] = code
-        status["msg"] = msg
+        while attempts <= 2:
+            attempts += 1
+            try:
+                code, msg = spawn_notebook(api_url, token, user, timeout, delete)
+                status["code"] = code
+                status["msg"] = msg
+                break
+            except TimeoutException:
+                logging.warning("A request timed out, may retry")
+                status["code"] = "CRITICAL"
+                status["msg"] = f"A HTTP call timed out after {attempts} attempts"
     except RequestError as e:
         logging.warning("Request error while checking notebooks: %s" % e)
         status["code"] = "CRITICAL"
