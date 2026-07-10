@@ -17,6 +17,7 @@ jobs:
   chart:
     name: Create chart
     runs-on: ubuntu-latest
+    environment: charts
 
     steps:
       - name: check out
