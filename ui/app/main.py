@@ -36,7 +36,7 @@ def read_status():
     try:
         with open(status_file) as f:
             return json.loads(f.read())
-    except Exception as e: # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         return {"time": time.time(), "code": "WARNING", "msg": str(e)}
 
 
