@@ -17,12 +17,12 @@ class PrefixMiddleware:
 
     def __call__(self, environ, start_response):
         if environ["PATH_INFO"].startswith(self.prefix):
-            new_path = environ["PATH_INFO"][len(self.prefix) :]  # noqa: E203
+            new_path = environ["PATH_INFO"][len(self.prefix) :]
             environ["PATH_INFO"] = new_path
             environ["SCRIPT_NAME"] = self.prefix
             return self.app(environ, start_response)
         start_response("404", [("Content-Type", "text/plain")])
-        return ["This url does not belong to the app.".encode()]
+        return [b"This url does not belong to the app."]
 
 
 prefix = os.environ.get("JUPYTERHUB_SERVICE_PREFIX", "/")
@@ -36,7 +36,7 @@ def read_status():
     try:
         with open(status_file) as f:
             return json.loads(f.read())
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         return {"time": time.time(), "code": "WARNING", "msg": str(e)}
 
 
