@@ -9,6 +9,8 @@ from urllib.parse import urljoin
 import schedule
 from httpx import Client, HTTPTransport, RequestError, TimeoutException
 
+logger = logging.getLogger(__name__)
+
 
 def spawn_notebook(api_url, token, user, timeout=600, delete=True):
     start = time.time()
@@ -56,7 +58,7 @@ def spawn_notebook(api_url, token, user, timeout=600, delete=True):
 
 
 def check_notebook(api_url, token, user, timeout, delete=True):
-    logging.info("Checking notebooks spawning!")
+    logger.info("Checking notebooks spawning!")
     status = {}
     attempts = 0
     try:
@@ -68,18 +70,18 @@ def check_notebook(api_url, token, user, timeout, delete=True):
                 status["msg"] = msg
                 break
             except TimeoutException:
-                logging.warning("A request timed out, may retry")
+                logger.warning("A request timed out, may retry")
                 status["code"] = "CRITICAL"
                 status["msg"] = f"A HTTP call timed out after {attempts} attempts"
     except RequestError as e:
-        logging.warning("Request error while checking notebooks: %s" % e)
+        logger.warning(f"Request error while checking notebooks: {e}")
         status["code"] = "CRITICAL"
         status["msg"] = f"Error in checking notebooks: {e}"
     return status
 
 
 def check_binder(binder_url):
-    logging.info("Checking binder health!")
+    logger.info("Checking binder health!")
     status = {}
     transport = HTTPTransport(retries=3)
     client = Client(transport=transport)
@@ -99,14 +101,14 @@ def check_binder(binder_url):
     return status
 
 
-def check_and_write_status(f, status_file):
-    status = f()
+def check_and_write_status(check_fn, status_file):
+    status = check_fn()
     status.update(
         {
             "time": time.time(),
         }
     )
-    logging.debug("Updating status: %s" % status)
+    logger.debug(f"Updating status: {status}")
     with open(status_file, "w") as f:
         f.write(json.dumps(status))
     return status["code"] == "OK"
@@ -133,7 +135,7 @@ if __name__ == "__main__":
         url = url + "/"
     token = os.environ.get("JUPYTERHUB_API_TOKEN", "")
     user = os.environ.get("JUPYTERHUB_USER", "monitor")
-    timeout = int(os.environ.get("SPAWN_TIMEOUT", 600))
+    timeout = int(os.environ.get("SPAWN_TIMEOUT", "600"))
 
     if service_type == "jupyterhub":
         check_fn = partial(check_notebook, url, token, user, timeout, True)
